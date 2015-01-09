@@ -1,0 +1,14 @@
+#!/bin/bash
+cd $CHEF/org/chef-services/56m
+nodes=$(knife node list | grep -i logstash-elastic-prod)
+for i in $nodes; do 
+  status=$(curl -s $i:9200/_cluster/health | jq -r '.status')
+  echo "$i: $status"
+done
+echo ""
+echo "RED: Some or all of (primary) shards are not ready."
+echo "Yellow: Some or all of the replicas have not been allocated."
+echo "Green: Your cluster is fully operational."
+echo ""
+
+cd - > /dev/null

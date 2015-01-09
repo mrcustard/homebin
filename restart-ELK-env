@@ -1,0 +1,24 @@
+#!/bin/bash
+# this script will restart the entire ELK environment
+cd $CHEf/org/chef-services/56m
+elasticsearch_nodes=$(knife node list | grep logstash-elastic)  
+for i in $elasticsearch_nodes; do 
+  echo "Restarting: $i"
+  ssh $i "sudo service elasticsearch restart" 
+  sleep 2
+done
+
+# this is here to let the elasticsearch servers come up 
+# and get themselves organized from a cluster perspective.
+echo "Allowing elasticsearch time to get itself together"
+sleep 120
+
+logstash_nodes=$(knife node list | grep logstash-prod) 
+for i in $logstash_nodes ; do 
+  echo "Restarting: $i" 
+  ssh $i "sudo service logstash restart" 
+  sleep 2
+done
+
+cd - > /dev/null 2>&1
+

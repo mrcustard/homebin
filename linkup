@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# this script will set links on cookbooks if they don't exist
+
+cookbook_names=$(ls $CHEF/cookbooks | awk '$1 ~ /^cookbook/ { print $0 }' | sed 's/cookbook-//')
+link_names=$(ls $HOME/repos/syms)
+
+

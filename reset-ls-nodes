@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# This script does a virsh reset on all of the logstash nodes
+cd $CHEF/org/chef-services/56m
+nodes=$(for i in $(knife node list | grep -i logstash-prod ); do knife aerosol guest show $i | awk '/host/{h=$2} /label/ { print h,$2 }' ; done)
+
+while read i j; do
+  ssh -n $i "virsh reset $j"
+done <<< $nodes
+
+cd - > /dev/null 2>&1

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+find /Users/mgibson/Desktop -mtime +7 | grep -i "screen\ shot" | while read i; do 
+  rm -f "$i"
+done 

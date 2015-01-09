@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+# Sort mixed alphanumeric strings - corresponding numeric fields are compared
+# numerically, while corresponding alphabetical fields are compared
+# alphabetically.
+
+my @list = map { chomp; [ split /(\d+)/, $_ ] } <>;
+print join ("\n", map { join '', @$_ } sort cmp_mixed @list),"\n";
+exit(0);
+
+sub cmp_mixed
+{
+    my $result = 0;
+    for (my $i=0;  $i<@$a && $i<@$b; ++$i) {
+      if ($a->[$i] =~ /\d/ && $b->[$i] =~ /\d/) {
+          $result ||= $a->[$i] <=> $b->[$i];
+      } else {
+          $result ||= $a->[$i] cmp $b->[$i];
+      }
+      return $result if $result;
+  }
+}
+

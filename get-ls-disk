@@ -1,0 +1,4 @@
+#!/bin/bash
+cd $CHEF/org/chef-services/56m
+knife ssh 'name:logstash-prod*' "df -h | awk 'NR==2 { print }' "
+cd - > /dev/null
