@@ -2,5 +2,6 @@
 cd $CHEF/org/chef-services/56m
 index=$1
 master_node=$(get-es-master | awk '{ print $4 }')
-curl -XDELETE $master_node:9200/$index
+output=$(curl -s -XDELETE $master_node:9200/$index)
+echo "$master_node says $output"
 cd - > /dev/null 2>&1
