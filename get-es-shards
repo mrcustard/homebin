@@ -1,0 +1,5 @@
+#!/bin/bash
+cd $CHEF/org/chef-services/56m
+master_node=$(get-es-master | awk '{ print $4 }')
+curl -s -XGET $master_node:9200/_cat/shards
+cd - > /dev/null 2>&1
