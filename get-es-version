@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# script to get the nodes out of elasticsearch
+
+cd $CHEF/org/chef-services/56m
+elastic_nodes=$(knife node list | grep -i logstash-elastic)
+for i in $elastic_nodes; do
+  let result=$(ping -c 1 $i | awk 'NR==5 { print $7 }' | sed -e 's/\.0%//')
+  if (( $result == 0 )); then
+    curl -sS "http://$i:9200/_cat/nodes?v&h=name,ip,port,v,m"
+    break
+  fi
+done
+cd - > /dev/null 2>&1

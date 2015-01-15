@@ -1,0 +1,9 @@
+#!/bin/bash
+
+curl -XPUT 'http://logstash-elastic-prod-13.56m.vgtf.net:9200/_snapshot/kibana-int' -d '{
+  "type":"fs",
+  "settings": {
+    "compress":true, 
+    "location":"/Users/mgibson/Download/kibana-int"
+  }
+}'

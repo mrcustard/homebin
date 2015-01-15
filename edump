@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# wrapper around the elasticdump script to provide help
+if (( "$#" == 0 )); then
+/usr/local/bin/elasticdump "$@"
