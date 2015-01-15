@@ -3,7 +3,7 @@
 # script to get the nodes out of elasticsearch
 
 cd $CHEF/org/chef-services/56m
-elastic_nodes=$(knife node list | grep -i logstash-elastic)
+elastic_nodes=$(knife node list | grep -i elastic*)
 for i in $elastic_nodes; do
   let result=$(ping -c 1 $i | awk 'NR==5 { print $7 }' | sed -e 's/\.0%//')
   if (( $result == 0 )); then
