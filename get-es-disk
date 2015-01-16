@@ -1,4 +1,4 @@
 #!/bin/bash
 cd $CHEF/org/chef-services/56m
-knife ssh 'name:logstash-elastic-prod*' "df -h | awk 'NR==2 { print }' "
+knife ssh 'name:elastic-data*' "df -h | awk 'NR==2 { print }' "
 cd - > /dev/null 2>&1

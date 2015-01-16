@@ -1,5 +1,25 @@
 #!/bin/bash
 
 # wrapper around the elasticdump script to provide help
+usage(){ 
+  echo "$basename($0) - a wrapper around npm based elasticdump to provide help
+  --input (required) (see above)
+  --output (required) (see above)
+  --limit how many ojbects to move in bulk per operation (default: 100)
+  --debug display the elasticsearch commands being used (default: false)
+  --type what are we exporting? (default: data, options: [data, mapping])
+  --delete delete documents one-by-one from the input as they are moved (will not delete the source index) (default: false)
+  --searchBody preform a partial extract based on search results (when ES is the input, default: '{"query": { "match_all": {} } }')
+  --all load/store documents from ALL indices (default: false)
+  --bulk leverage elasticsearch Bulk API when writing documents (default: false)
+  --ignore-errors will continue the read/write loop on write error (default: false)
+  --scrollTime Time the nodes will hold the requested search in order. (default: 10m)
+  --maxSockets How many simultanius HTTP requests can this process make? (default: 5 [node <= v0.10.x] / Infinity [node >= v0.11.x] )
+  --bulk-use-output-index-name Force use of destination index name (actually the actual output URL) as destination while bulk writing to ES. Allows leveraging Bulk API copying data inside the same elasticsearch instance. (default: false)"
+}
+
 if (( "$#" == 0 )); then
-/usr/local/bin/elasticdump "$@"
+  usage
+else
+  /usr/local/bin/elasticdump "$@"
+fi
