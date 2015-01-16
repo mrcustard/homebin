@@ -3,8 +3,8 @@
 # wrapper around the elasticdump script to provide help
 usage(){ 
   echo "$basename($0) - a wrapper around npm based elasticdump to provide help
-  --input (required) (see above)
-  --output (required) (see above)
+  --input (required)
+  --output (required)
   --limit how many ojbects to move in bulk per operation (default: 100)
   --debug display the elasticsearch commands being used (default: false)
   --type what are we exporting? (default: data, options: [data, mapping])
