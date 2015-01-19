@@ -1,6 +1,6 @@
 #!/bin/bash
 cd $CHEF/org/chef-services/56m
-nodes=$(knife node list | grep -i logstash-elastic-prod)
+nodes=$(knife node list | grep -i elastic-data*)
 
 for i in $nodes; do 
   status=$(curl -s $i:9200/_aliases | jq -r '(keys|tostring)')
