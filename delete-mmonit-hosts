@@ -1,0 +1,29 @@
+#!/bin/bash
+usage() {
+  local progname=$(basename $0)
+  echo "$progname <environment> <location> <id>" >&2
+  exit 1
+}
+
+if (( $# != 3 )) ; then
+  usage
+fi
+
+if [ ! -d $HOME/.mmonit ]; then 
+  mkdir $HOME/.mmonit
+fi  
+
+environment=$1
+datacenter=$2
+id=$3
+dcenv="$datacenter.$environment"
+mmonit_host="mmonit.$dcenv.net"
+cookie="cookie-$dcenv"
+curl -s -c ~/.mmonit/$cookie http://$mmonit_host:8080/index.csp 2>&1 > /dev/null
+curl -s -b ~/.mmonit/$cookie \
+  -d @$HOME/.mmonit/.creds \
+  -d z_csrf_protection=off \
+  http://mmonit.$dcenv.net:8080/z_security_check 2>&1 > /dev/null
+
+
+curl -s -b ~/.mmonit/$cookie -d "id=$id" http://mmonit.$dcenv.net:8080/admin/hosts/delete
