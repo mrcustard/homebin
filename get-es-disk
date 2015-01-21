@@ -1,4 +1,22 @@
 #!/bin/bash
 cd $CHEF/org/chef-services/56m
-knife ssh 'name:elastic-data*' "df -h | awk 'NR==2 { print }' "
-cd - > /dev/null 2>&1
+usage() { 
+  echo "$(basename $0) <cluster>"
+}
+if (( $# == 0 )); then
+  usage
+else 
+  case "$1" in
+    "sports")
+      CLUSTER="sports"
+      ;;
+    "news")
+      CLUSTER="data"
+      ;;
+    "ent")
+      CLUSTER="ent"
+      ;;
+  esac
+  knife ssh "name:elastic-$CLUSTER*" "df -h | awk 'NR==2 { print }' "
+  cd - > /dev/null 2>&1
+fi
