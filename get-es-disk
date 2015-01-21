@@ -1,11 +1,13 @@
 #!/bin/bash
-cd $CHEF/org/chef-services/56m
+
 usage() { 
   echo "$(basename $0) <cluster>"
 }
+
 if (( $# == 0 )); then
   usage
 else 
+  cd $CHEF/org/chef-services/56m
   case "$1" in
     "sports")
       CLUSTER="sports"
