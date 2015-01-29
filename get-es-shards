@@ -1,10 +1,1 @@
-#!/bin/bash
-cd $CHEF/org/chef-services/56m
-elastic_nodes=$(knife node list | grep -i elastic-client)
-for i in $elastic_nodes; do
-  let result=$(ping -c 1 $i | awk 'NR==5 { print $7 }' | sed -e 's/\.0%//')
-  if (( $result == 0 )); then
-    curl -s -XGET $i:9200/_cat/shards
-  fi
-done
-cd - > /dev/null 2>&1
+GO/get-es-shards

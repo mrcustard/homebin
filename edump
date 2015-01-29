@@ -2,7 +2,7 @@
 
 # wrapper around the elasticdump script to provide help
 usage(){ 
-  echo "$basename($0) - a wrapper around npm based elasticdump to provide help
+  echo "$(basename $0) - a wrapper around npm based elasticdump to provide help
   --input (required)
   --output (required)
   --limit how many ojbects to move in bulk per operation (default: 100)
@@ -18,7 +18,7 @@ usage(){
   --bulk-use-output-index-name Force use of destination index name (actually the actual output URL) as destination while bulk writing to ES. Allows leveraging Bulk API copying data inside the same elasticsearch instance. (default: false)"
 }
 
-if (( "$#" == 0 )); then
+if (( $# == 0 )); then
   usage
 else
   /usr/local/bin/elasticdump "$@"

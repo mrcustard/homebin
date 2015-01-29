@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() { 
-  echo "$(basename $0) <cluster>"
+  echo "${0##*/} <cluster>"
 }
 
 if (( $# == 0 )); then
