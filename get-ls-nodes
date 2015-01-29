@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd $CHEF/org/chef-services/56m
+knife node list | grep -i logstash 
+cd - > /dev/null
