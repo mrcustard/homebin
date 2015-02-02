@@ -1,9 +1,16 @@
 #!/usr/bin/env ruby
 #
+#
+
+# Global $var
+# Class @@var
+# Instance @var
+# Local var
+# Block var
 
 require 'mmonit'
 
-@m = MMonit::Connection.new({:ssl => false, :username => 'admin', :password => 'swordfish', :address => 'mmonit.56m.dmtio.net', :port => '8080'})
+$m = MMonit::Connection.new({:ssl => false, :username => 'admin', :password => 'swordfish', :address => 'mmonit.56m.dmtio.net', :port => '8080'})
 
 #m.status.each do |stat|
 #  if stat['status'].match(/No report from Monit/)
@@ -13,7 +20,7 @@ require 'mmonit'
 
 # find the id of the node
 def find_host(hostname)
-  @m.status.each do |status|
+  $m.status.each do |status|
     printf "#{status['id']} #{status['hostname']}" if status['hostname'] == hostname
   end
 end
