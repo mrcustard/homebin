@@ -1,0 +1,18 @@
+ERROR: 2015-02-03T18:55:14Z
+  Error: Request error, retrying -- connect ECONNREFUSED
+      at Log.error (/usr/local/lib/node_modules/makelogs/node_modules/elasticsearch/src/lib/log.js:213:60)
+      at checkRespForFailure (/usr/local/lib/node_modules/makelogs/node_modules/elasticsearch/src/lib/transport.js:193:18)
+      at HttpConnector.<anonymous> (/usr/local/lib/node_modules/makelogs/node_modules/elasticsearch/src/lib/connectors/http.js:145:7)
+      at ClientRequest.bound (/usr/local/lib/node_modules/makelogs/node_modules/elasticsearch/node_modules/lodash-node/modern/internals/baseBind.js:56:17)
+      at ClientRequest.EventEmitter.emit (events.js:95:17)
+      at Socket.socketErrorListener (http.js:1547:9)
+      at Socket.EventEmitter.emit (events.js:95:17)
+      at net.js:440:14
+      at process._tickCallback (node.js:419:13)
+
+WARNING: 2015-02-03T18:55:14Z
+  Unable to revive connection: http://localhost:9200/
+
+WARNING: 2015-02-03T18:55:14Z
+  No living connections
+

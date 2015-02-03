@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+#
+
+require 'mmonit'
+
+# Connect to M/Monit
+$m = MMonit::Connection.new({:ssl => false, 
+                            :username => 'admin', 
+                            :password => 'swordfish', 
+                            :address => 'mmonit.56m.dmtio.net', 
+                            :port => '8080'})
+
+def delete_all_unresponsive
+  $m.status.each do |stat|
+    if stat['status'].match(/No report from Monit/)
+      puts "Deleting id: #{stat['id']}" if stat['id']
+      m.request("/admin/hosts/delete", "id=#{stat['id']}")
+    end
+  end
+end
+
+# delete a specified node
+def delete_by_name(node)
+  $m.status.each do |stat|
+   if stat['hostname'] == node 
+     puts "Deleting node: " + stat['hostname']
+     $m.request("/admin/hosts/delete", "id=#{stat['id']}")
+   end
+  end
+end
+
+if __FILE__ == $0
+  if ARGV.length == 0
+    puts "You need to specifiy something to delete, host or ALL"
+  end
+  if ARGV[0] == "ALL" 
+    delete_all_unresponsive
+  else 
+    delete_by_name(ARGV[0])
+  end
+end
