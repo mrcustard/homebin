@@ -1,0 +1,13 @@
+#!/bin/bash
+usage() {
+  echo "${0##*/} <json_file> <yaml_file>"
+}
+
+if (( $# <= 1 )); then
+  usage 
+else
+  jsonfile=$1
+  yamlfile=$2
+  python -c 'import sys, yaml, json; yaml.safe_dump(json.load(sys.stdin), sys.stdout, allow_unicode=True)' < $jsonfile > $yamlfile
+fi
+
