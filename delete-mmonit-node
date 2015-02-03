@@ -31,7 +31,7 @@ end
 
 if __FILE__ == $0
   if ARGV.length == 0
-    puts "You need to specifiy something to delete, host or ALL"
+    puts "You need to specifiy something to delete, <node name> or ALL"
   end
   if ARGV[0] == "ALL" 
     delete_all_unresponsive
