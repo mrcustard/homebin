@@ -6,5 +6,5 @@ require 'open-uri'
 
 uri = 'http://forecast.weather.gov/MapClick.php?CityName=Alpharetta&state=GA&site=FFC&lat=34.0689&lon=-84.272#.VOYiDFPF91k'
 doc = Nokogiri::HTML(open(uri))
-#puts doc.at_css('.prop-value-zestimate .value').text #delete("$,")
+#puts doc.at_css('.one-ninth-first')#.text #delete("$,")
 puts doc

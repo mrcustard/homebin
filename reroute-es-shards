@@ -1,27 +1,11 @@
 #!/bin/bash
 # script to reroute elasticsearch indexes that are Unassigned
 usage(){ 
-  echo "Usage: $0 [ -n <node> -s <node> ]" 
+  echo "Usage: $0 [ <node> <sendto> ]" 
 }
 
-while [[ $# > 1 ]]; do
-  key=$1
-  case $key in 
-    -n|--node)
-      NODE="$1"
-      shift
-      ;;
-    -s|--sendto)
-      SENDTO="$1"
-      shift
-      ;;
-    *)
-      usage
-      ;;
-  esac
-  shift
-done
-
+NODE=$1
+SENDTO=$2
 IFS=$'\n'
 for line in $(curl -s "$NODE:9200/_cat/shards" | fgrep UNASSIGNED); do # localhost needs to be changed here as well.
   INDEX=$(echo $line | (awk '{print $1}'))

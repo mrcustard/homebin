@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 #
 
+require 'json'
 require 'mmonit'
 
 # Connect to M/Monit
@@ -10,18 +11,23 @@ $m = MMonit::Connection.new({:ssl => false,
                             :address => 'mmonit.56m.dmtio.net', 
                             :port => '8080'})
 
+$count = 0
+
 def delete_all_unresponsive
-  $m.status.each do |stat|
-    if stat['status'].match(/No report from Monit/)
+  resp = JSON.parse($m.request('/status/hosts/list').body)['records']
+  resp.each do |stat|
+    if stat['status'].match(/No report from Monit/) 
       puts "Deleting id: #{stat['id']}" if stat['id']
-      m.request("/admin/hosts/delete", "id=#{stat['id']}")
+      $m.request("/admin/hosts/delete", "id=#{stat['id']}")
+      $count += 1
     end
   end
 end
 
 # delete a specified node
 def delete_by_name(node)
-  $m.status.each do |stat|
+  resp = JSON.parse($m.request('/status/hosts/list').body)['records']
+  resp.each do |stat|
    if stat['hostname'] == node 
      puts "Deleting node: " + stat['hostname']
      $m.request("/admin/hosts/delete", "id=#{stat['id']}")
@@ -29,12 +35,21 @@ def delete_by_name(node)
   end
 end
 
+def create_json_output
+  nodes = {}
+  f = open(::File.join('', 'var', 'tmp', 'mmonit-deleted-nodes.json'), 'w')
+  nodes['deleted'] = $count
+  f.write(JSON.generate(nodes)) # generate something so that we can send how many we've deleted to circonus.
+end
+
+
 if __FILE__ == $0
   if ARGV.length == 0
     puts "You need to specifiy something to delete, <node name> or ALL"
   end
   if ARGV[0] == "ALL" 
     delete_all_unresponsive
+    create_json_output
   else 
     delete_by_name(ARGV[0])
   end
