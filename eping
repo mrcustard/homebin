@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Enhanced ping adds time and date to ping
+
+ping $1 | while read LINE; do echo $(date): $LINE; done

@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'json'
+
+api_url = "api.hipchat.com"
+url = "/v1/rooms/list?auth_token=c7eadba4c2d5b439ff93062449ff9d"
+
+response = JSON.parse(Net::HTTP.get(api_url, url))
+
+puts "%-20s %-40s %-30s" % %w{ Room\ ID Name	XMPP\ ID } 
+response.each do |x|
+  x[1].each do |room|
+    puts "%-20s %-40s %-30s" % [ room["room_id"], room["name"], room["xmpp_jid"] ]
+  end
+end
+
+
+
+
