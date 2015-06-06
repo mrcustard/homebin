@@ -29,3 +29,5 @@ curl -s -b ~/.mmonit/$cookie \
 
 groupcreated=$(curl -s -b ~/.mmonit/$cookie -d "name=$groupname" http://mmonit.$dcenv.net:8080/admin/groups/create)
 echo "Group id for ${groupname} is ${groupcreated}"
+
+
