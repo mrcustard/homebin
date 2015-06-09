@@ -5,21 +5,27 @@ require 'grok-pure'
 require 'pp'
 
 grok = Grok.new
-grok.add_patterns_from_file("/Users/mgibson/repos/turner/cookbooks/cookbook-logstash-turner/templates/default/patterns/postfix.grok") # this could be any file or even a cli arg.
 
-#pattern = 'your_grok_pattern_here'
-#grok.compile
-#puts "PATTERN: #{pattern}"
+Dir.glob('patterns/*').each do |pattern|
+  grok.add_patterns_from_file(pattern) 
+end
+
+f = open('patterns/postfix.grok', 'r').readlines.each do |line|
+  line.split(' ')[0].gsub(/#/, '').chomp 
+end
+
+pattern = '(%{TIMESTAMP_ISO8601:timestamp}|%{SYSLOGTIMESTAMP:timestamp}) %{SYSLOGHOST:host} %{DATA:program}(?:\[%{POSINT:pid}\])?: %{GREEDYDATA:message}'
+
+grok.compile(pattern)
+puts "PATTERN: #{pattern}"
 
 while a = gets
   puts "IN: #{a}"
-  if a != nil
   match = grok.match(a)
   if match
-    puts "MATCH:"
-    pp match.captures
+    #puts "MATCH:"
+    match['message']
   else
     puts "No Match"
-  end
   end
 end

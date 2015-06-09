@@ -2,13 +2,21 @@
 #
 
 require 'pp'
+require 'json'
 require 'grok-pure'
 
 grok = Grok.new
-grok.add_patterns_from_file("patterns/")
+Dir.glob('patterns/*').each do |pattern|
+  grok.add_patterns_from_file(pattern)
+end
+
 
 text = 'May 10 06:41:11 cmapi1 postfix/smtpd[26140]: 8720C602E2: client=unknown[10.60.238.78]'
-pattern = '%{SYSLOGTIMESTAMP:timestamp}'
-
+pattern = '%{SYSLOGTIMESTAMP} %{HOST}'
 grok.compile(pattern)
-pp grok.match(text).captures()
+if grok.match(text)
+  pp grok.match(text).captures()
+else
+  puts "No Match"
+end
+
