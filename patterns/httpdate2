@@ -1,0 +1,1 @@
+HTTPDATE2 %{MONTHDAY}/%{MONTH}/%{YEAR}(:| )%{TIME}( %{INT})?

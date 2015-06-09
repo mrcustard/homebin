@@ -1,0 +1,1 @@
+ COMMONAPACHELOG2 %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE2:timestamp}\] "(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})" (?:%{NUMBER:response}|-) (?:%{NUMBER:bytes}|-)
