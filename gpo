@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# A little script that will allow me to push to the correct branch based on where I am
+#set -x 
+branch=$(git branch | awk '/\*/ { print $2 }')
+git push origin $branch
+
