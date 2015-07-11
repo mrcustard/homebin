@@ -3,24 +3,24 @@
 usage(){ 
   echo "Usage: $0 [ <node> <sendto> ]" 
 }
-
-NODE=$1
-SENDTO=$2
-IFS=$'\n'
-for line in $(curl -s "$NODE:9200/_cat/shards" | fgrep UNASSIGNED); do # localhost needs to be changed here as well.
-  INDEX=$(echo $line | (awk '{print $1}'))
-  SHARD=$(echo $line | (awk '{print $2}'))
-
-  curl -XPOST "$NODE:9200/_cluster/reroute" -d '{
-     "commands": [
-        {
-            "allocate": {
-                "index": "'$INDEX'",
-                "shard": '$SHARD',
-                "node": "'$SENDTO'",
-                "allow_primary": true
+if (( $# == 0 )); then
+  usage
+else
+  NODE=$1
+  SENDTO=$2
+  IFS=$'\n'
+  while read index shard ; do # localhost needs to be changed here as well.
+    curl -XPOST "$NODE:9200/_cluster/reroute" -d '{
+       "commands": [
+          {
+              "allocate": {
+                  "index": "'$INDEX'",
+                  "shard": '$SHARD',
+                  "node": "'$SENDTO'",
+                  "allow_primary": true
+            }
           }
-        }
-    ]
-  }'
-done
+      ]
+    }'
+  done <<< $(curl -s "$NODE:9200/_cat/shards" | fgrep UNASSIGNED | awk '{ print $1, $2 }')
+fi

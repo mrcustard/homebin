@@ -1,0 +1,109 @@
+#!/bin/bash
+# ft:sh
+# script to create a logstash plugin directory structure.
+
+# ensure that ENV var is set 
+: ${LOGSTASH_PLUGIN_DIR:?"Environment variable LOGSTASH_PLUGIN_DIR not set"} 
+
+usage() {
+  echo "ERROR: you must include plugin in type and plugin name"
+  echo "${0##*/} <plugin_type> <plugin_name>"
+}
+
+plugin_type=$1 # plugin type - should be one of (input|filter|output)
+plugin_name=$2 # plugin name - the name which will be called after input { plugin_name { } }
+
+if (( $# < 2 )); then 
+  usage
+else
+  # setup the directory vars
+  dir="logstash-$plugin_type-$plugin_name"
+  libdir="$LOGSTASH_PLUGIN_DIR/$dir/lib/logstash/$plugin_type"
+  specdir="$LOGSTASH_PLUGIN_DIR/$dir/spec/outputs"
+  
+  # create the initial directory
+  mkdir $dir
+  echo "Created directory $dir"
+
+  # create the standard files
+  touch $dir/Gemfile
+  touch $dir/Rakefile
+  touch $dir/LICENSE
+  touch $dir/README.md
+  echo "Created Gemfile, Rakefile, LICENSE, README.md"
+  
+  # create the lib directory
+  mkdir -p $libdir
+  echo "Created $libdir"
+
+  # create the plugin file that will contain all of the 'things'
+  touch "${libdir}/${plugin_name}.rb"
+  echo "Created file ${libdir}/${plugin_name}.rb"
+
+  # create the gemspec file - alternatively we should populate this too ... using a HERE doc
+  touch "${dir}/${dir}.gemspec"
+  echo "Created ${dir}/${dir}.gemspec"
+
+  # create the spec dir
+  mkdir -p $specdir 
+  echo "Created $specdir"
+  
+  # create the spec file
+  touch "$specdir/${plugin_name}_spec.rb"
+  echo "Created file $specdir/${plugin_name}_spec.rb"
+
+  # populate lib file with basic code structure 
+  # use ^ at the end of the var to upper case the first var
+  cat << EOF > "${libdir}/${plugin_name}.rb"
+# encoding: utf-8
+require "logstash/outputs/base"
+require "logstash/namespace"
+
+# Add any asciidoc formatted documentation here
+# An example output that does nothing.
+class LogStash::${plugin_type^}s::${plugin_name^} < LogStash::Outputs::Base
+  config_name "${plugin_name}"
+
+  public
+  def register
+  end # def register
+
+  public
+  def receive(event)
+  end # def receive
+
+end # class LogStash::${plugin_type^}s::${plugin_name^}
+EOF
+
+  # populate the Gemfile
+  # quote the label EOF to ensure that backticks don't 
+  # attempt to run when creating the contents of the 
+  # file - this only works if you don't have vars`
+cat << EOF > "${dir}/${dir}.gemspec"
+Gem::Specification.new do |s|
+  s.name = 'logstash-${plugin_type}-${plugin_name}'
+  s.version = '0.1.0'
+  s.licenses = ['Apache License (2.0)']
+  s.summary = "This is a ${plugin_type}, and works with ${plugin_name}s"
+  s.description = "This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program"
+  s.authors = ["Elastic"]
+  s.email = 'SRE@turner.com'
+  s.homepage = "http://www.elastic.co/guide/en/logstash/current/index.html"
+  s.require_paths = ["lib"]
+
+  # Files
+  s.files = git_ls_files.split($\)
+   # Tests
+  s.test_files = s.files.grep(%r{^(test|spec|features)/})
+
+  # Special flag to let us know this is actually a logstash plugin
+  s.metadata = { "logstash_plugin" => "true", "logstash_group" => "${plugin_type}" }
+
+  # Gem dependencies
+  s.add_runtime_dependency 'logstash-core', '>= 1.4.0', '< 2.0.0'
+  s.add_development_dependency 'logstash-devutils'
+end
+EOF
+  sed -i.bak 's/git_ls_files/\`git ls-files\`/' "${dir}/${dir}.gemspec" 
+  rm -f "${dir}/${dir}.gemspec.bak"
+fi

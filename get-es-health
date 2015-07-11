@@ -1,5 +1,6 @@
 #!/bin/bash
 cd $CHEF/org/chef-services/56m
+
 nodes=$(knife node list | grep -i elastic-client)
 for i in $nodes; do 
   status=$(curl -s $i:9200/_cluster/health | jq -r '.status')
