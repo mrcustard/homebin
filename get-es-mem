@@ -3,5 +3,5 @@
 # script to get the memory information from the logstash cluster
 
 cd $CHEF/org/chef-services/56m
-knife ssh 'name:logstash-elastic*' "free -m | awk 'NR==2 { print }'"
+knife ssh 'name:elastic-*' "free -m | awk 'NR==2 { print }'"
 cd - > /dev/null 2>&1

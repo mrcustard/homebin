@@ -1,0 +1,23 @@
+#!/bin/bash
+# ft:bash
+
+usage () {
+  echo "${0##*/} <java package> <log level> (INFO|WARN|DEBUG|TRACE)"
+  echo ""
+  echo "org.elasticsearch.env for logging messages referring to node's data paths
+org.elasticsearch.indices.recovery and <code>org.elasticsearch.index.gateway for logging messages referring to shards recoveries
+org.elasticsearch.cluster.action.shard for logging messages related to shard states (failed shards, shards starting etc)
+org.elasticsearch.snapshots for everything related to snapshots&restore
+org.elasticsearch.http to monitor for any binding or connectivity/discovery issues between nodes
+org.elasticsearch.marvel.agent.exporter to monitor the Marvel agent"
+}
+
+if (( $# < 1 )); then
+  echo "You don't have enough arguments to set debug"
+  usage
+else 
+  curl -s -XPUT "http://elastic-master-prod-1.56m.vgtf.net:9200/_cluster/settings" -d \
+    '{ "transient" : { "logger.discovery.zen.fd" : "TRACE" } }'
+  
+   
+fi

@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'json'
+
+api_url = "api.hipchat.com"
+url = "/v1/users/list?auth_token=c7eadba4c2d5b439ff93062449ff9d"
+
+count = 0
+
+response = JSON.parse(Net::HTTP.get(api_url, url))
+response['users'].each do |user|
+  #puts user['name']
+  count += 1
+end
+puts JSON.generate({ "hipchatusercount" => count })
+
+
+
+

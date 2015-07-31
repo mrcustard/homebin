@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -s -XGET 'http://elastic-client-prod-1.56m.vgtf.net:9200/_cat/recovery'

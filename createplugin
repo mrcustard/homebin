@@ -17,13 +17,14 @@ if (( $# < 2 )); then
   usage
 else
   # setup the directory vars
-  dir="logstash-$plugin_type-$plugin_name"
-  libdir="$LOGSTASH_PLUGIN_DIR/$dir/lib/logstash/$plugin_type"
-  specdir="$LOGSTASH_PLUGIN_DIR/$dir/spec/outputs"
+  dir="logstash-${plugin_type}-${plugin_name}"
+  libdir="${LOGSTASH_PLUGIN_DIR}/${dir}/lib/logstash/${plugin_type}"
+  specdir="${LOGSTASH_PLUGIN_DIR}/${dir}/spec/outputs"
   
   # create the initial directory
   mkdir $dir
   echo "Created directory $dir"
+  echo ""
 
   # create the standard files
   touch $dir/Gemfile
@@ -31,26 +32,32 @@ else
   touch $dir/LICENSE
   touch $dir/README.md
   echo "Created Gemfile, Rakefile, LICENSE, README.md"
-  
+  echo ""  
+   
   # create the lib directory
   mkdir -p $libdir
   echo "Created $libdir"
+  echo ""
 
   # create the plugin file that will contain all of the 'things'
   touch "${libdir}/${plugin_name}.rb"
   echo "Created file ${libdir}/${plugin_name}.rb"
+  echo ""
 
   # create the gemspec file - alternatively we should populate this too ... using a HERE doc
   touch "${dir}/${dir}.gemspec"
   echo "Created ${dir}/${dir}.gemspec"
+  echo ""
 
   # create the spec dir
   mkdir -p $specdir 
   echo "Created $specdir"
+  echo ""
   
   # create the spec file
   touch "$specdir/${plugin_name}_spec.rb"
   echo "Created file $specdir/${plugin_name}_spec.rb"
+  echo ""
 
   # populate lib file with basic code structure 
   # use ^ at the end of the var to upper case the first var

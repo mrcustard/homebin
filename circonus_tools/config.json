@@ -1,0 +1,9 @@
+{ 
+  "apitoken":"a06a1a30-4249-4ec3-bb0b-e54c890a7f15",
+  "app":"curl",
+  "hours":24,
+  "period":300,
+  "cpu":"aggregation`cpu-average`cpu`idle",
+  "disk":"df`root`df_complex`used",
+  "memory":"memory`memory`used"
+}
