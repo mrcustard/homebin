@@ -3,7 +3,16 @@
   "app":"curl",
   "hours":24,
   "period":300,
-  "cpu":"aggregation`cpu-average`cpu`idle",
+  "cpu" : {
+    "cpuidle":"aggregation`cpu-average`cpu`idle",
+    "cpuint":"aggregation`cpu-average`cpu`interrupt",
+    "cpunice":"aggregation`cpu-average`cpu`nice",
+    "cpusoftirq": "aggregation`cpu-average`cpu`softirq",
+    "cpusteal":"aggregation`cpu-average`cpu`steal",
+    "cpusystem":"aggregation`cpu-average`cpu`system",
+    "cpuuser":"aggregation`cpu-average`cpu`user",
+    "cpuwait":"aggregation`cpu-average`cpu`wait"
+  },
   "disk":"df`root`df_complex`used",
   "memory":"memory`memory`used"
 }
