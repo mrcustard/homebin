@@ -1,0 +1,9 @@
+#!/bin/bash
+# ft:bash
+
+curl_output=$(curl -s -XGET 'http://elastic-client-prod-1.56m.vgtf.net:9200/_cat/shards'| awk '$3 == "p" { print }'| grep -i logstash)
+for i in $curl_output; do
+  echo $i 
+done
+
+

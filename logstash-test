@@ -1,0 +1,10 @@
+#!/bin/bash
+# ft:bash
+
+# Script to test logstash conf files
+if (( $# == 0 )); then
+  echo "Please use a logstash config file"
+else
+  /usr/local/bin/logstash -e 'input { stdin { } }' -e 'output { null { } }' -f "$@" --configtest
+fi
+

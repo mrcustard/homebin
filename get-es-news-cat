@@ -1,0 +1,56 @@
+#!/bin/bash
+# ft:bash
+
+host="elastic-client-prod-2.56m.vgtf.net"
+
+if (( $# == 0 )); then
+  curl -s -XGET "http://$host:9200/_cat"
+else
+  curl -s -XGET "http://$host:9200/_cat/$@"
+fi
+
+#/_cat/allocation
+#/_cat/master
+#/_cat/nodes
+#/_cat/indices
+#/_cat/indices/{index}
+#/_cat/segments
+#/_cat/segments/{index}
+#/_cat/count
+#/_cat/count/{index}
+#/_cat/recovery
+#/_cat/recovery/{index}
+#/_cat/health
+#/_cat/pending_tasks
+#/_cat/aliases
+#/_cat/aliases/{alias}
+#/_cat/thread_pool
+#/_cat/plugins
+#/_cat/fielddata
+#/_cat/fielddata/{fields}
+
+#help() {
+#  echo "Please choose one of the items below"
+#  curl -s -XGET "http://$host:9200/_cat"
+#}
+#
+#
+#
+#case "$input" in
+#  --help*)
+#    help
+#  ;;
+#  --shards)
+#   curl -s -XGET "http://$host:9200/_cat/shards" 
+#   ;;
+#  --allocation)  
+#   curl -s -XGET "http://$host:9200/_cat/allocation" 
+#   ;;
+#  --nodes)
+#   curl -s -XGET "http://$host:9200/_cat/allocation" 
+#   ;;
+#  --health)
+#   curl -s -XGET "http://$host:9200/_cat/health" 
+#  ;;
+#esac
+
