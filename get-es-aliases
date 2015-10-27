@@ -2,6 +2,8 @@
 cd $CHEF/org/chef-services/56m
 
   status=$(curl -s elastic-client-prod-1.56m.vgtf.net:9200/_aliases | jq -r '(keys|tostring)')
-  echo "$i: $status"
+  for i in "$status"; do
+    echo $i
+  done
 
 cd - > /dev/null

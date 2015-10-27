@@ -1,7 +1,117 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ft:bash
+#set -x 
+# script to help with troubleshooting elasticsearch
 
-if (($# < 1 )); then
-  echo "You need to specify an elastic host to connect to"
-else
-  curl -s $@ | jq '.'
-fi
+news_cluster="elastic-client-prod-1.56m.vgtf.net"
+sports_cluster="elastic-sport-client-1.56m.vgtf.net"
+
+usage(){
+  echo "Usage: ${0##*/} [options]"
+  echo """
+  -a      Get allocations
+  -i      Display Index health
+  -c      Cluster Name [Required]
+  -n      Get a list of nodes from the cluster
+  -t      Get pending tasks from the cluster
+  -h      Get the health of the cluster
+  -m      Get the Master of the cluster
+  -s      Get the shards in the cluster
+  -p      Get thread pool
+  -w      Request what ever you want from the cluster [e.g. /nodes?help]
+  -l      Get list of items that can be queried and are used by this script
+  -R      Get ongoing recovery tasks
+  -H      Get the Hot Threads [ALL|node id]
+ """ 
+}
+
+get_req() {
+  case $cluster in 
+    news)
+      ping=$(ping -c 1 $news_cluster > /dev/null 2>&1 ; echo $?)
+      if (( $ping == 0 )); then 
+        curl -s -XGET "http://$news_cluster:9200$req"
+      else
+        echo "Node: $news_cluster appears to be down"
+      fi
+      ;;
+    sports)
+      ping=$(ping -c 1 $sports_cluster > /dev/null 2>&1 ; echo $?)
+      if (( $ping == 0 )); then
+        curl -s -XGET "http://$sports_cluster:9200$req"
+      else
+        echo "Node: $sports_cluster appears to be down"
+      fi
+      ;;
+  esac
+}
+
+
+
+while getopts ":c:w:H:ainhtslmpRH" opt; do
+  case $opt in 
+    a)
+      req="/_cat/allocation?v"
+      get_req $cluster $req | grep -iv logstash 
+      ;;
+    i)
+      req="/_cat/indices/log*?v"
+      get_req $cluster $req
+      ;;
+    c)
+      cluster=$OPTARG
+      ;;
+    n)
+      req="/_cat/nodes"
+      get_req $cluster $req
+      ;;
+    t)
+      req="/_cat/pending_tasks?v"
+      get_req $cluster $req
+      ;;
+    h)
+      req="/_cat/health?v&ts=0"
+      get_req $cluster $req
+      ;;
+    s)
+      req="/_cat/shards"
+      get_req $cluster $req
+      ;;
+    m)
+      req="/_cat/master?v"
+      get_req $cluster $req
+      ;;
+    p)
+      req="/_cat/thread_pool?v"
+      get_req $cluster $req | grep -iv logstash 
+      ;;
+    w)
+      req="/_cat$OPTARG"
+      get_req $cluster $req
+      ;;
+    R)
+      req="/_cat/recovery?v"
+      get_req $cluster $req
+      ;;
+    H)
+      if [[ $OPTARG = "ALL" ]]; then
+        req="/_nodes/hot_threads"
+        get_req $cluster $req
+      else 
+        req="/_nodes/$OPTARG/hot_threads"
+        get_req $cluster $req
+      fi
+      ;;
+    l)
+      req="?help"
+      get_req $cluster $req
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG"
+      usage
+      ;;
+    :)
+      echo "Option -$OPTARG requires and argument." >&2
+      ;;
+  esac
+done

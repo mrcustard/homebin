@@ -5,12 +5,16 @@
 # in the proper ratio for burning fat for my body
 
 # how many calories you can eat in a day
-total_calories = ARGV[0] || 2092 # my default calories right now
-
+total_calories = ARGV[1] || 2092 # my default calories right now
+meals_per_day = ARGV[0].to_i || 3 
 # percentages
 fat = [0.30, 0.40]
 carb = [0.10,0.30]
 protein = [0.40,0.50]
+
+fat_cals = 9
+carb_cals = 4
+protein_cals = 4
 
 # Total for the day
 total_fat_day = total_calories.to_i * (fat[0]).to_f
@@ -18,9 +22,15 @@ total_carb_day = total_calories.to_i * (carb[0]).to_f
 total_protein_day = (total_calories.to_i * protein[1]).to_f
 
 # Per meal 
-fat_meal = total_fat_day / 5
-carb_meal = total_carb_day / 5
-protein_meal = total_protein_day / 5
+fat_meal = total_fat_day / meals_per_day 
+carb_meal = total_carb_day / meals_per_day 
+protein_meal = total_protein_day / meals_per_day 
+
+fat_grams = fat_meal / fat_cals
+carb_grams = carb_meal / carb_cals
+protein_grams = protein_meal / protein_cals
+
+total_meal = fat_meal + carb_meal + protein_meal
 
 puts ""
 puts "Fat (calories) for the day: %.2f" % total_fat_day
@@ -29,11 +39,16 @@ puts "Protein (calories) for the day: %.2f" % total_protein_day
 puts ""
 puts "=============================================="
 puts ""
-puts "Fat (calories) per meal @ 5 meals: %.2f" % fat_meal
-puts "Carb (calories) per meal @ 5 meals: %.2f" % carb_meal
-puts "Protein (calories) per meal @ 5 meals: %.2f" % protein_meal 
+puts "Fat (calories) per meal @ #{meals_per_day} meals: %.2f" % fat_meal
+puts "Carb (calories) per meal @ #{meals_per_day} meals: %.2f" % carb_meal
+puts "Protein (calories) per meal @ #{meals_per_day} meals: %.2f" % protein_meal 
+puts ""
+puts "Fat (grams) per meal @ #{meals_per_day} meals: %.2f" % fat_grams 
+puts "Carb (grams) per meal @ #{meals_per_day} meals: %.2f" % carb_grams
+puts "Protein (grams) per meal @ #{meals_per_day} meals: %.2f" % protein_grams
 puts ""
 puts "----------------------------------------------"
 puts "Calories for the day: #{total_calories}"
+puts "Calories for each meal: %.2f" % total_meal
 puts ""
 

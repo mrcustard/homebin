@@ -2,17 +2,20 @@
 # ft:bash
 # this script will set links on cookbooks if they don't exist
 
-link_dir="/Users/mgibson/repos/turner/syms/"
-cookbook_dir="/Users/mgibson/repos/turner/cookbooks/"
+link_dir="${HOME}/repos/turner/syms"
+cookbook_dir="${HOME}/repos/turner/cookbooks"
 cookbooks_list=$(for i in $(ls $cookbook_dir); do echo "${i##cookbook-}" ; done | xargs ) 
 
+cd $link_dir
 for i in $cookbooks_list; do
   ls $link_dir | grep -i $i > /dev/null 2>&1
   if (( $? != 0 )); then
     #logger -p local3.info "Missing link for $i"
     echo "Missing link for ${i}"
+    ln -s "${cookbook_dir}/cookbook-${i}" $i 
   fi
 done
+cd - >/dev/null 2>&1
 
 
 
