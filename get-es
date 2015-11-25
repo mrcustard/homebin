@@ -4,7 +4,7 @@
 # script to help with troubleshooting elasticsearch
 
 news_cluster="elastic-client-prod-1.56m.vgtf.net"
-sports_cluster="elastic-sport-client-1.56m.vgtf.net"
+sports_cluster="elastic-sports-client-1.56m.vgtf.net"
 
 usage(){
   echo "Usage: ${0##*/} [options]"
@@ -12,13 +12,15 @@ usage(){
   -a      Get allocations
   -i      Display Index health
   -c      Cluster Name [Required]
+  -d      Disk Available
   -n      Get a list of nodes from the cluster
   -t      Get pending tasks from the cluster
   -h      Get the health of the cluster
   -m      Get the Master of the cluster
   -s      Get the shards in the cluster
   -p      Get thread pool
-  -w      Request what ever you want from the cluster [e.g. /nodes?help]
+  -w      Request what ever you want from the _cat section of the cluster [e.g. /nodes?help]
+  -q      Request whatever you want from anywhere in the cluster
   -l      Get list of items that can be queried and are used by this script
   -R      Get ongoing recovery tasks
   -H      Get the Hot Threads [ALL|node id]
@@ -48,7 +50,7 @@ get_req() {
 
 
 
-while getopts ":c:w:H:ainhtslmpRH" opt; do
+while getopts ":c:w:q:H:adinhtslmpRH" opt; do
   case $opt in 
     a)
       req="/_cat/allocation?v"
@@ -61,6 +63,10 @@ while getopts ":c:w:H:ainhtslmpRH" opt; do
     c)
       cluster=$OPTARG
       ;;
+    d)
+      req="/_cat/nodes?h=h,d"
+      get_req $cluster $req | grep -iv logstash
+      ;;  
     n)
       req="/_cat/nodes"
       get_req $cluster $req
@@ -89,6 +95,10 @@ while getopts ":c:w:H:ainhtslmpRH" opt; do
       req="/_cat$OPTARG"
       get_req $cluster $req
       ;;
+    q)
+      req="$OPTARG"
+      get_req $cluster $req
+      ;;
     R)
       req="/_cat/recovery?v"
       get_req $cluster $req
@@ -103,7 +113,7 @@ while getopts ":c:w:H:ainhtslmpRH" opt; do
       fi
       ;;
     l)
-      req="?help"
+      req="/_cat/?help"
       get_req $cluster $req
       ;;
     \?)
