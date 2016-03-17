@@ -1,0 +1,66 @@
+for i in $(curl -s -XGET 'http://10.60.11.178:9200/logstash-2015.12.16.03/_search?pretty' -d '{
+  "facets": {
+    "terms": {
+      "terms": {
+        "field": "clientip.raw",
+        "size": 30,
+        "order": "count",
+        "exclude": []
+      },
+      "facet_filter": {
+        "fquery": {
+          "query": {
+            "filtered": {
+              "query": {
+                "bool": {
+                  "should": [
+                    {
+                      "query_string": {
+                        "query": "tags:fastly AND response:5*"
+                      }
+                    },
+                    {
+                      "query_string": {
+                        "query": "tags:fastly"
+                      }
+                    }
+                  ]
+                }
+              },
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "range": {
+                        "@timestamp": {
+                          "from": 1450235575339,
+                          "to": 1450235875339
+                        }
+                      }
+                    }
+                  ],
+                  "must_not": [
+                    {
+                      "exists": {
+                        "field": "customer.raw"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "size": 0
+}' | jq -r '.facets|.terms|.terms|.[]|.term' | sort | uniq ) ; do
+  org=$(whois $i | grep "Organization") 
+  if (( $? > 0 )); then 
+    org="Organization:\t No Organization Listed" 
+    printf "$i \t $org\n"  
+  else
+    printf "$i \t $org\n"
+  fi
+done | grep -vE "^157"

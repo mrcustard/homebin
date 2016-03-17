@@ -1,0 +1,9 @@
+#!/usr/bin/env bash 
+
+logstash_nodes=$(get-es -c news -n | awk '/logstash/ { print $1 }' | sort | uniq) 
+
+for i in $logstash_nodes; do
+ logstash_node="$i.56m.vgtf.net" 
+ result=$(ssh $logstash_node 'uptime') 
+ printf "%s\t %s\t %s\t %s\t %s\t %s\t %s\t %s\t %s\t %s\t %s\t %s\t %s\t \n" $i.56m.vgtf.net $result
+done

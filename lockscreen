@@ -1,0 +1,18 @@
+#!/usr/bin/osascript
+ignoring application responses
+	tell application "System Events"
+		tell process "SystemUIServer"
+			click (first menu bar item of menu bar 1 whose value of attribute "AXDescription" is "Keychain menu extra")
+		end tell
+	end tell
+end ignoring
+delay 0.1
+do shell script "killall 'System Events'"
+delay 0.1
+tell application "System Events"
+	tell process "SystemUIServer"
+		tell (first menu bar item of menu bar 1 whose value of attribute "AXDescription" is "Keychain menu extra")
+			click menu item "Lock Screen" of menu 1
+		end tell
+	end tell
+end tell
