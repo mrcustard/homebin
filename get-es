@@ -10,29 +10,33 @@ usage(){
   echo "Usage: ${0##*/} [options]"
   echo """
   -a      Get allocations
-  -i      Display Index health
   -c      Cluster Name [Required]
   -d      Disk Available
-  -n      Get a list of nodes from the cluster
-  -t      Get pending tasks from the cluster
-  -h      Get the health of the cluster
-  -m      Get the Master of the cluster
-  -s      Get the shards in the cluster
-  -p      Get thread pool
-  -w      Request what ever you want from the _cat section of the cluster [e.g. /nodes?help]
-  -q      Request whatever you want from anywhere in the cluster
+  -h      Display this help message 
+  -i      Display Index health
   -l      Get list of items that can be queried and are used by this script
-  -R      Get ongoing recovery tasks
+  -m      Get the Master of the cluster
+  -n      Get a list of nodes from the cluster
+  -p      Get thread pool
+  -q      Request whatever you want from anywhere in the cluster
+  -s      Get the shards in the cluster
+  -t      Get pending tasks from the cluster
+  -v      Get the health of the cluster
+  -w      Request what ever you want from the _cat section of the cluster [e.g. /nodes?help]
+  -D      Delete a specific shard 
   -H      Get the Hot Threads [ALL|node id]
+  -R      Get ongoing recovery tasks
+  -S      Get cluster Stats
  """ 
 }
 
 get_req() {
+  method=${1:-"GET"}
   case $cluster in 
     news)
       ping=$(ping -c 1 $news_cluster > /dev/null 2>&1 ; echo $?)
       if (( $ping == 0 )); then 
-        curl -s -XGET "http://$news_cluster:9200$req"
+        curl -s -X$method "http://$news_cluster:9200$req"
       else
         echo "Node: $news_cluster appears to be down"
       fi
@@ -40,25 +44,28 @@ get_req() {
     sports)
       ping=$(ping -c 1 $sports_cluster > /dev/null 2>&1 ; echo $?)
       if (( $ping == 0 )); then
-        curl -s -XGET "http://$sports_cluster:9200$req"
+        curl -s -X$method "http://$sports_cluster:9200$req"
       else
         echo "Node: $sports_cluster appears to be down"
       fi
+      ;;
+    *)
+      curl -s -X$method "http://$cluster:9200$req"
       ;;
   esac
 }
 
 
 
-while getopts ":c:w:q:H:adinhtslmpRH" opt; do
+while getopts ":c:w:q:D:H:adinhtsvlmpHRS" opt; do
   case $opt in 
     a)
       req="/_cat/allocation?v"
-      get_req $cluster $req | grep -iv logstash 
+      get_req $cluster $req | grep -ivE "logstash|client" 
       ;;
     i)
       req="/_cat/indices/log*?v"
-      get_req $cluster $req
+      get_req "GET" $cluster $req
       ;;
     c)
       cluster=$OPTARG
@@ -76,8 +83,7 @@ while getopts ":c:w:q:H:adinhtslmpRH" opt; do
       get_req $cluster $req
       ;;
     h)
-      req="/_cat/health?v&ts=0"
-      get_req $cluster $req
+      usage
       ;;
     s)
       req="/_cat/shards"
@@ -91,6 +97,10 @@ while getopts ":c:w:q:H:adinhtslmpRH" opt; do
       req="/_cat/thread_pool?v"
       get_req $cluster $req | grep -iv logstash 
       ;;
+    v)
+      req="/_cat/health?v&ts=0"
+      get_req $cluster $req
+      ;;
     w)
       req="/_cat$OPTARG"
       get_req $cluster $req
@@ -99,9 +109,10 @@ while getopts ":c:w:q:H:adinhtslmpRH" opt; do
       req="$OPTARG"
       get_req $cluster $req
       ;;
-    R)
-      req="/_cat/recovery?v"
-      get_req $cluster $req
+    D)
+      method="DELETE"
+      req="/$OPTARG"
+      get_req $method $cluster $req
       ;;
     H)
       if [[ $OPTARG = "ALL" ]]; then
@@ -111,6 +122,14 @@ while getopts ":c:w:q:H:adinhtslmpRH" opt; do
         req="/_nodes/$OPTARG/hot_threads"
         get_req $cluster $req
       fi
+      ;;
+    R)
+      req="/_cat/recovery?v"
+      get_req $cluster $req
+      ;;
+    S)
+      req="/_stats"
+      get_req $cluster $req | jq '.'
       ;;
     l)
       req="/_cat/?help"
